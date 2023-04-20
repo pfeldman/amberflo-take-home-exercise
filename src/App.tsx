@@ -1,25 +1,52 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Views from './views'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline'
+import Toolbar from '@mui/material/Toolbar'
+import Typography from '@mui/material/Typography'
+import MuiAppBar from '@mui/material/AppBar'
+import { QueryClientProvider, QueryClient } from 'react-query'
+
+const mdTheme = createTheme();
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 60 * 24,
+    },
+  },
+});
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={mdTheme}>
+          <CssBaseline />
+          <MuiAppBar position="absolute">
+            <Toolbar>
+              <Typography
+                component="h1"
+                variant="h6"
+                color="inherit"
+                noWrap
+                sx={{ flexGrow: 1 }}
+              >
+                Meters
+              </Typography>
+            </Toolbar>
+          </MuiAppBar>
+          <Routes>
+            <Route path='/' element={<Views.MetersDashboard />} />
+            <Route path='/details/:meterId' element={<Views.MeterDetails />} />
+            <Route path='/edit/:meterId' element={<Views.MeterEdit />} />
+            <Route path='/create' element={<Views.MeterCreate />} />
+          </Routes>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </Router>
   );
 }
 
